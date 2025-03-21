@@ -2,7 +2,18 @@
 
 wchar_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
+#ifdef _WIN32
+
 LARGE_INTEGER frequency, start, end;
+
+#else
+
+struct timespec start, end;
+
+// Set up the signal handler for SIGWINCH
+struct sigaction sa;
+
+#endif
 
 double elapsed_time = 0.0f;
 

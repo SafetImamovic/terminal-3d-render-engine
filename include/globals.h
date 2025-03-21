@@ -16,4 +16,9 @@ extern LARGE_INTEGER frequency, start, end;
 
 #else
 
+extern struct timespec start, end;
+
+// Set up the signal handler for SIGWINCH
+extern struct sigaction sa;
+
 #endif

@@ -1,4 +1,7 @@
 #include "../../include/core/utils.h"
+#include <time.h>
+#include <stdio.h>
+#include <signal.h>
 
 void draw_edges(wchar_t vertical, wchar_t horizontal, wchar_t corner)
 {
@@ -39,6 +42,17 @@ void init_measurement()
 
 #else
 
+        sa.sa_flags = 0;
+
+        sigemptyset(&sa.sa_mask);
+
+        if (sigaction(SIGWINCH, &sa, NULL) == -1)
+        {
+                perror("sigaction");
+
+                return;
+        }
+
 #endif
 }
 
@@ -50,6 +64,8 @@ void measure_start()
         QueryPerformanceCounter(&start);
 
 #else
+
+        clock_gettime(CLOCK_MONOTONIC, &start);
 
 #endif
 }
@@ -63,6 +79,7 @@ void measure_end()
 
 #else
 
+        clock_gettime(CLOCK_MONOTONIC, &end);
 #endif
 }
 
@@ -74,6 +91,8 @@ void measure_diff()
         elapsed_time = (double)(end.QuadPart - start.QuadPart) * 1000.0 / frequency.QuadPart;
 
 #else
+
+        elapsed_time = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_nsec - start.tv_nsec) / 1000000.0;
 
 #endif
 }
