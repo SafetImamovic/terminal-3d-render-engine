@@ -30,7 +30,9 @@ void draw_coordinate_system()
         buffer[(SCREEN_HEIGHT / 2) - 1][(SCREEN_WIDTH / 2) - 1] = L'+';
 }
 
-void init_measurement() {}
+void init_measurement() { QueryPerformanceFrequency(&frequency); }
+
+void measure(double *time) {}
 
 void draw_stats(double elapsed_time)
 {

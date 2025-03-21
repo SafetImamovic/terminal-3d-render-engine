@@ -8,11 +8,7 @@ int main()
 
         // TODO: Pretify this whole thing.
 #ifdef _WIN32
-
-        LARGE_INTEGER frequency, start, end;
-
-        QueryPerformanceFrequency(&frequency);
-
+        CORE.UTILS.init_measurement();
 #else
 
         struct timespec start, end;

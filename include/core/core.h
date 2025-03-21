@@ -19,6 +19,8 @@ typedef struct
         void (*draw_edges)(wchar_t, wchar_t, wchar_t);
         void (*draw_coordinate_system)(void);
         void (*draw_stats)(double);
+        void (*init_measurement)(void);
+        void (*measure)(double *);
 
 } utils;
 

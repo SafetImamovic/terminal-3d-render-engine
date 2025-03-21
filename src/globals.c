@@ -2,6 +2,8 @@
 
 wchar_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
+LARGE_INTEGER frequency, start, end;
+
 // Initialize the global `core` struct and assign function pointers
 core CORE = {
     .TERMINAL =
@@ -12,5 +14,10 @@ core CORE = {
                    .render_buffer = render_buffer,
                    .clear_buffer  = clear_buffer,
                    },
-    .UTILS = {.draw_edges = draw_edges, .draw_coordinate_system = draw_coordinate_system, .draw_stats = draw_stats}
+    .UTILS = {
+                   .draw_edges             = draw_edges,
+                   .draw_coordinate_system = draw_coordinate_system,
+                   .draw_stats             = draw_stats,
+                   .init_measurement       = init_measurement,
+                   .measure                = measure}
 };
