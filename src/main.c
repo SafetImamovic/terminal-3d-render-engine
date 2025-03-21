@@ -1,4 +1,4 @@
-#include "../include/core/core.h"
+#include "../include/globals.h"
 
 int main()
 {
