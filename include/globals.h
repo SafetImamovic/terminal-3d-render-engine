@@ -8,6 +8,12 @@
 
 extern wchar_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
+extern double elapsed_time;
+
 #ifdef _WIN32
+
 extern LARGE_INTEGER frequency, start, end;
+
+#else
+
 #endif

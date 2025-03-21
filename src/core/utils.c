@@ -30,11 +30,55 @@ void draw_coordinate_system()
         buffer[(SCREEN_HEIGHT / 2) - 1][(SCREEN_WIDTH / 2) - 1] = L'+';
 }
 
-void init_measurement() { QueryPerformanceFrequency(&frequency); }
+void init_measurement()
+{
 
-void measure(double *time) {}
+#ifdef _WIN32
 
-void draw_stats(double elapsed_time)
+        QueryPerformanceFrequency(&frequency);
+
+#else
+
+#endif
+}
+
+void measure_start()
+{
+
+#ifdef _WIN32
+
+        QueryPerformanceCounter(&start);
+
+#else
+
+#endif
+}
+
+void measure_end()
+{
+
+#ifdef _WIN32
+
+        QueryPerformanceCounter(&end);
+
+#else
+
+#endif
+}
+
+void measure_diff()
+{
+
+#ifdef _WIN32
+
+        elapsed_time = (double)(end.QuadPart - start.QuadPart) * 1000.0 / frequency.QuadPart;
+
+#else
+
+#endif
+}
+
+void draw_stats()
 {
         double fps = 1000.0 / elapsed_time;
 

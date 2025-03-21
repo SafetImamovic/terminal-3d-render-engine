@@ -7,8 +7,10 @@ int main()
         CORE.TERMINAL.init_console();
 
         // TODO: Pretify this whole thing.
-#ifdef _WIN32
+
         CORE.UTILS.init_measurement();
+
+#ifdef _WIN32
 #else
 
         struct timespec start, end;
@@ -29,14 +31,12 @@ int main()
 
 #endif
 
-        double elapsedTime = 0.0f;
-
         while (1)
         {
 
-#ifdef _WIN32
+                CORE.UTILS.measure_start();
 
-                QueryPerformanceCounter(&start);
+#ifdef _WIN32
 
 #else
 
@@ -48,17 +48,16 @@ int main()
 
                 CORE.UTILS.draw_coordinate_system();
 
-                CORE.UTILS.draw_stats(elapsedTime);
+                CORE.UTILS.draw_stats();
 
                 CORE.UTILS.draw_edges('|', '-', '+');
 
                 CORE.TERMINAL.render_buffer();
 
+                CORE.UTILS.measure_end();
 #ifdef _WIN32
 
-                QueryPerformanceCounter(&end);
-
-                elapsedTime = (double)(end.QuadPart - start.QuadPart) * 1000.0 / frequency.QuadPart;
+                CORE.UTILS.measure_diff();
 
 #else
 
