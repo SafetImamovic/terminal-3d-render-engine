@@ -22,6 +22,17 @@ if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32)
 endif()
 
+# Enable warnings and extra warnings
+add_compile_options(-Wall -Wextra)
+
+# Set debugging flags for Debug build type
+set(CMAKE_C_FLAGS_DEBUG "-g")  # This will enable debugging symbols (-g)
+
+# Optionally, add specific flags for different build types
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(${PROJECT_NAME} PRIVATE -g)
+endif()
+
 # Custom target: "make run"
 add_custom_target(run
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${PROJECT_NAME}
