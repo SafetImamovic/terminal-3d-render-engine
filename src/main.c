@@ -12,6 +12,7 @@
 #endif
 
 #include "../include/globals.h"
+#include "../include/core/terminal.h"
 
 int main()
 {
@@ -19,6 +20,7 @@ int main()
 
         while (1)
         {
+                TERMINAL.clear_buffer();
         }
 
         return 0;
