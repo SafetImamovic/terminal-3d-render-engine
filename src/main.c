@@ -1,34 +1,39 @@
+/*===============================================================================================*
+ *
+ * The MAIN file. Render Engine entrypoint.
+ *
+ *===============================================================================================*/
+
 #include "../include/globals.h"
 
 int main()
 {
-        CORE.TERMINAL.hide_cursor();
+        Core.Terminal.hide_cursor();
 
-        CORE.TERMINAL.init_console();
+        Core.Terminal.init_console();
 
-        CORE.UTILS.init_measurement();
+        Core.Utils.init_measurement();
 
         while (1)
         {
+                Core.Utils.measure_start();
 
-                CORE.UTILS.measure_start();
+                Core.Terminal.clear_buffer();
 
-                CORE.TERMINAL.clear_buffer();
+                Core.Utils.draw_coordinate_system();
 
-                CORE.UTILS.draw_coordinate_system();
+                Core.Utils.draw_stats();
 
-                CORE.UTILS.draw_stats();
+                Core.Utils.draw_edges('|', '-', '+');
 
-                CORE.UTILS.draw_edges('|', '-', '+');
+                Core.Terminal.render_buffer();
 
-                CORE.TERMINAL.render_buffer();
+                Core.Utils.measure_end();
 
-                CORE.UTILS.measure_end();
-
-                CORE.UTILS.measure_diff();
+                Core.Utils.measure_diff();
         }
 
-        CORE.TERMINAL.show_cursor();
+        Core.Terminal.show_cursor();
 
         return 0;
 }
