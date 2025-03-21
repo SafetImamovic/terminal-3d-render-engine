@@ -1,0 +1,9 @@
+services:
+  terminal-3d-render-engine:
+    build:
+      context: .
+    volumes:
+      - ./:/app
+    stdin_open: true
+    tty: true
+
