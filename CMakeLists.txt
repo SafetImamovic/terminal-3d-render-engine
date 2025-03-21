@@ -7,7 +7,8 @@ set(CMAKE_C_STANDARD 17)
 include_directories(include)
 
 file(GLOB SOURCES
-    # src/core/*.c
+    src/core/*.c
+    src/globals.c
     # src/engine/*.c
     # src/math/*.c
     src/main.c
