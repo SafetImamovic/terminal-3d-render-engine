@@ -2,31 +2,63 @@
 
 A lightweight **3D render engine** that runs directly in the terminal.
 
-## 🔧 Building
+## 🔧 Building & Running
 
 This project uses **CMake** for cross-platform builds.
 
-### 🐧 Linux
+#### Build the project
 
 ```sh
 cmake -B build -S .
+```
+
+#### Build the executable
+
+```sh
 cmake --build build
+```
+
+#### Build & Run
+
+To build and run the project:
+
+```sh
+cmake --build build --target run
+```
+
+### 🐧 Linux
+
+#### Build & Run
+
+```sh
+make -C build run
 ```
 
 ### 🪟 Windows
 
-#### **Visual Studio (Default)**
+#### **Visual Studio**
 
-```powershell
-cmake -B build -S .
-```
-Generates a Visual Studio `.sln` project.
+[The first build command](#build-the-project) targets Visual Studio by default.
+It generates a Visual Studio `.sln` project.
 
 #### **MinGW (Alternative)**
 
+To build with MinGW:
+
 ```powershell
 cmake -B build -S . -G "MinGW Makefiles"
+```
+
+To build the executable:
+
+```powershell
 mingw32-make -C build
 ```
 
-Now you’re ready to run the engine! 🚀
+Run the engine:
+
+```powershell
+mingw32-make -C build run
+```
+
+Now you’re ready to experience 3D rendering in the terminal! 🚀
