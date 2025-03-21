@@ -10,9 +10,11 @@ int main()
         {
                 CORE.TERMINAL.clear_buffer();
 
-                CORE.TERMINAL.draw_coordinate_system();
+                CORE.UTILS.draw_coordinate_system();
 
-                CORE.TERMINAL.draw_edges('|', '-', '+');
+                CORE.UTILS.draw_stats(0.0f);
+
+                CORE.UTILS.draw_edges('|', '-', '+');
 
                 CORE.TERMINAL.render_buffer();
         }
