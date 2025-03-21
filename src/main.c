@@ -1,14 +1,3 @@
-#ifdef _WIN32
-#include <windows.h>
-#include <conio.h>
-#else
-// #include <time.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-// #include <signal.h>
-#include <fcntl.h>
-#endif
-
 #include "../include/core/core.h"
 
 int main()
