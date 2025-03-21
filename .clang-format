@@ -1,0 +1,32 @@
+BasedOnStyle: LLVM
+IndentWidth: 8
+UseTab: Never
+ColumnLimit: 120
+BreakBeforeBraces: Allman
+SortIncludes: false
+AlignArrayOfStructures: Left
+
+BreakArrays: true
+
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+
+AlignAfterOpenBracket: AlwaysBreak
+
+BraceWrapping:
+  AfterFunction: true
+  AfterStruct: true
+  AfterClass: true
+  AfterControlStatement: true
+  BeforeElse: true
+  BeforeWhile: true
+  AfterNamespace: true
+  BeforeCatch: true
+
+
+AlignEscapedNewlinesLeft: true
+AlignOperands: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AlignConsecutiveDeclarations: true
