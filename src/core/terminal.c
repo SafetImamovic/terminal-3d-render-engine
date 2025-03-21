@@ -137,14 +137,3 @@ void draw_coordinate_system()
 
         buffer[(SCREEN_HEIGHT / 2) - 1][(SCREEN_WIDTH / 2) - 1] = L'+';
 }
-
-terminal TERMINAL = {
-    .init_console           = init_console,
-    .hide_cursor            = hide_cursor,
-    .show_cursor            = show_cursor,
-    .render_buffer          = render_buffer,
-    .clear_buffer           = clear_buffer,
-    .draw_edges             = draw_edges,
-    .draw_coordinate_system = draw_coordinate_system
-
-};

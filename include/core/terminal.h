@@ -8,19 +8,6 @@
 #include <conio.h>
 #endif
 
-typedef struct
-{
-        void (*init_console)(void);
-        void (*hide_cursor)(void);
-        void (*show_cursor)(void);
-        void (*render_buffer)(void);
-        void (*clear_buffer)(void);
-        void (*draw_edges)(wchar_t, wchar_t, wchar_t);
-        void (*draw_coordinate_system)(void);
-} terminal;
-
-extern terminal TERMINAL;
-
 void init_console();
 
 void hide_cursor();
