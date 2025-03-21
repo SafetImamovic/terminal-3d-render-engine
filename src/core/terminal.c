@@ -1,7 +1,5 @@
 #include "../../include/core/terminal.h"
 
-#include <stdio.h>
-
 #ifdef _WIN32
 
 HANDLE     hConsole;
@@ -10,12 +8,17 @@ COORD      bufferSize  = {SCREEN_WIDTH, SCREEN_HEIGHT};
 COORD      bufferCoord = {0, 0};
 SMALL_RECT writeRegion = {0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1};
 
+#else
+
+#include <stdio.h>
+
 #endif
 
 void init_console()
 {
 
 #ifdef _WIN32
+
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
         SetConsoleMode(hConsole, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);

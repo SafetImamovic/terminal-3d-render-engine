@@ -15,6 +15,8 @@ int main()
 {
         CORE.TERMINAL.hide_cursor();
 
+        CORE.TERMINAL.init_console();
+
         while (1)
         {
                 CORE.TERMINAL.clear_buffer();
