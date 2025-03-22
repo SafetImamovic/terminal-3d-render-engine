@@ -9,7 +9,8 @@
  *
  *===============================================================================================*/
 
-#pragma once
+#ifndef UTILS_H
+#define UTILS_H
 
 #include "../../include/constants.h"
 #include "../../include/globals.h"
@@ -62,3 +63,5 @@ void measure_diff();
  * Displays the elapsed time and FPS on the first row of the buffer.
  */
 void draw_stats();
+
+#endif

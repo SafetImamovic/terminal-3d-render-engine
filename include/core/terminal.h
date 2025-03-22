@@ -7,7 +7,8 @@
  *
  *===============================================================================================*/
 
-#pragma once
+#ifndef TERMINAL_H
+#define TERMINAL_H
 
 #include "../../include/constants.h"
 #include "../../include/globals.h"
@@ -58,3 +59,5 @@ void render_buffer();
  * Clears the screen buffer by filling it with spaces.
  */
 void clear_buffer();
+
+#endif

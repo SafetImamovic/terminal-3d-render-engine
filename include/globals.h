@@ -6,12 +6,11 @@
  *
  *===============================================================================================*/
 
-#pragma once
+#ifndef GLOBALS_H
+#define GLOBALS_H
 
 #include <wchar.h>
 #include "constants.h"
-#include "core/terminal.h"
-#include "core/utils.h"
 
 #ifdef _WIN32
 
@@ -240,3 +239,5 @@ typedef struct
         Triangle *tris;
 
 } Mesh;
+
+#endif
