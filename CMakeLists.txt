@@ -20,6 +20,8 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 # Set C flags for platform-specific code (e.g., for Windows)
 if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32)
+else()
+    target_link_libraries(${PROJECT_NAME} m)
 endif()
 
 # Enable warnings and extra warnings

@@ -34,6 +34,8 @@ extern wchar_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
  *
  *===============================================================================================*/
 
+extern const wchar_t full_block;
+
 extern double elapsed_time;
 
 #ifdef _WIN32

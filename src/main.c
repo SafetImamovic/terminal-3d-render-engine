@@ -4,9 +4,9 @@
  *
  *===============================================================================================*/
 
+#include <math.h>
 #include "../include/globals.h"
 #include <stdio.h>
-#include <math.h>
 #include <stdio.h>
 
 FILE *log_file;
@@ -16,9 +16,8 @@ double rotation_factor = 0.0f;
 
 double circle_function(double x)
 {
-        double radius = 100.0f;
 
-        x /= 1.5f;
+        double radius = 100.0f;
 
         // Check if x is within the circle's range
         if (x > (int)-radius && x < (int)radius)
@@ -123,7 +122,7 @@ void draw_pixel(double x, double y)
         if (_x < 0 || _x > SCREEN_WIDTH - 1)
                 return;
 
-        buffer[(int)y][_x] = '$';
+        buffer[(int)y][_x] = full_block;
 }
 
 /**
@@ -187,12 +186,12 @@ void draw_function(double (*fn)(int), int x)
 
         fprintf(log_file, "\n x: %i, y: %f, _y: %i", x, y, (int)y);
 
-        buffer[(int)y][x] = '$';
+        buffer[(int)y][x] = full_block;
 }
 
 int main()
 {
-        fopen_s(&log_file, "logs.txt", "a");
+        log_file = fopen("logs.txt", "a");
 
         int rotated_x, rotated_y;
 

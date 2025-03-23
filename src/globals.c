@@ -27,6 +27,8 @@ wchar_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
  *
  *===============================================================================================*/
 
+const wchar_t full_block = L'\u2588';
+
 #ifdef _WIN32
 
 LARGE_INTEGER frequency, start, end;
