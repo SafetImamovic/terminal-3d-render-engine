@@ -13,6 +13,8 @@ FILE *log_file;
 
 double factor          = 0.1f;
 double rotation_factor = 0.0f;
+double phase           = 0.0f;
+double vert_shift      = 0.0f;
 
 double circle_function(double x)
 {
@@ -39,7 +41,7 @@ double linear_function(double x)
 
 double sin_function(double x)
 {
-        double y = sin(factor * x) / factor;
+        double y = (sin(factor * x + phase) / factor) + vert_shift;
 
         return y;
 }
@@ -242,9 +244,38 @@ int main()
 
                 // factor -= 0.000005f;
 
-                rotation_factor += 0.001f;
-
                 theta = rotation_factor * PI;
+
+                if (_kbhit())
+                {
+                        int c = _getch();
+
+                        fprintf(log_file, "%i\n", c);
+
+                        switch (c)
+                        {
+                        case 72:
+                                rotation_factor += 0.01f;
+                                break;
+                        case 80:
+                                rotation_factor -= 0.01f;
+                                break;
+                        case 75:
+                                phase += 0.1f;
+                                break;
+                        case 77:
+                                phase -= 0.1f;
+                                break;
+                        case 119:
+                                vert_shift += 1.0f;
+                                break;
+                        case 115:
+                                vert_shift -= 1.0f;
+                                break;
+                        default:
+                                continue;
+                        }
+                }
         }
 
         Core.Terminal.show_cursor();
