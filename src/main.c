@@ -199,7 +199,7 @@ void draw_function(double (*fn)(int), int x)
  * and not just addition and subtraction, but hey it works for now.
  *
  * TODO: Optimize.
- *
+ */
 void bla(int x0, int y0, int x1, int y1)
 {
         // bla(0, SCREEN_WIDTH - 1, (int)SCREEN_WIDTH / 2, 0);
