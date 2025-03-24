@@ -9,8 +9,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define SCREEN_WIDTH 960
-#define SCREEN_HEIGHT 270
+#define SCREEN_WIDTH 256
+#define SCREEN_HEIGHT 128
 
 #define PI 3.14159265359
 

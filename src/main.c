@@ -16,6 +16,8 @@ double rotation_factor = 0.0f;
 double phase           = 0.0f;
 double vert_shift      = 0.0f;
 
+double (*current_fn)(double);
+
 double circle_function(double x)
 {
 
@@ -75,7 +77,8 @@ double quadratic_function(double x)
 double cubic_function(double x)
 {
 
-        double y = (factor * x) * (factor * x) * (factor * x);
+        double y = 3 * (factor * x) * (factor * x) * (factor * x) + -2 * (factor * x) * (factor * x) + (factor * x) +
+                   vert_shift;
         return y;
 }
 
@@ -191,6 +194,35 @@ void draw_function(double (*fn)(int), int x)
         buffer[(int)y][x] = full_block;
 }
 
+/**
+ * Bad Bresenham's Line Algorithm implementation because it uses multiplication
+ * and not just addition and subtraction, but hey it works for now.
+ *
+ * TODO: Optimize.
+ *
+void bla(int x0, int y0, int x1, int y1)
+{
+        // bla(0, SCREEN_WIDTH - 1, (int)SCREEN_WIDTH / 2, 0);
+
+        int dx  = x1 - x0;
+
+        int dy  = y1 - y0;
+
+        float m = 0.0f;
+
+        if (x0 != x1)
+                m = dy / (float)dx;
+
+        for (int i = 0; i < dx; i++)
+        {
+                float _y                 = (m * i) + y0 + 0.5;
+
+                float _x                 = x0 + i;
+
+                buffer[(int)_y][(int)_x] = '$';
+        }
+}
+
 int main()
 {
         log_file = fopen("logs.txt", "a");
@@ -204,6 +236,8 @@ int main()
         Core.Terminal.init_console();
 
         Core.Utils.init_measurement();
+
+        // current_fn = sin_function;
 
         while (1)
         {
@@ -219,11 +253,11 @@ int main()
                         // draw_function(log_function, x);
                         // draw_function(linear_function, x);
 
-                        rotate_function(sin_function, theta, x, &rotated_x, &rotated_y);
+                        // rotate_function(current_fn, theta, x, &rotated_x, &rotated_y);
 
                         // draw_function(reciprocal_function, x);
 
-                        draw_pixel(rotated_x, rotated_y);
+                        // draw_pixel(rotated_x, rotated_y);
 
                         // draw_function(circle_function, x);
 
@@ -232,17 +266,13 @@ int main()
                         // draw_pixel(rotated_x, rotated_y);
                 }
 
-                Core.Utils.draw_stats();
+                bla(0, 96, (int)SCREEN_WIDTH / 2, 0);
 
-                Core.Utils.draw_edges('|', '-', '+');
+                bla((int)SCREEN_WIDTH / 2 - 2, 0, SCREEN_WIDTH - 2, 96);
 
-                Core.Terminal.render_buffer();
+                bla(0, 96, SCREEN_WIDTH / 2, 110);
 
-                Core.Utils.measure_end();
-
-                Core.Utils.measure_diff();
-
-                // factor -= 0.000005f;
+                bla(SCREEN_WIDTH / 2, 110, SCREEN_WIDTH, 96);
 
                 theta = rotation_factor * PI;
 
@@ -254,6 +284,27 @@ int main()
 
                         switch (c)
                         {
+                        case 49:
+                                current_fn = linear_function;
+                                break;
+                        case 50:
+                                current_fn = sin_function;
+                                break;
+                        case 51:
+                                current_fn = quadratic_function;
+                                break;
+                        case 52:
+                                current_fn = log_function;
+                                break;
+                        case 53:
+                                current_fn = e_function;
+                                break;
+                        case 54:
+                                current_fn = reciprocal_function;
+                                break;
+                        case 55:
+                                current_fn = cubic_function;
+                                break;
                         case 72:
                                 rotation_factor += 0.01f;
                                 break;
@@ -276,6 +327,18 @@ int main()
                                 continue;
                         }
                 }
+
+                Core.Utils.draw_stats();
+
+                Core.Utils.draw_edges('|', '-', '+');
+
+                Core.Terminal.render_buffer();
+
+                Core.Utils.measure_end();
+
+                Core.Utils.measure_diff();
+
+                // factor -= 0.000005f;
         }
 
         Core.Terminal.show_cursor();
