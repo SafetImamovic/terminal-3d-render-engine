@@ -10,7 +10,6 @@
 #define GLOBALS_H
 
 #include <wchar.h>
-#include "constants.h"
 
 #ifdef _WIN32
 
@@ -18,6 +17,8 @@
 #include <conio.h>
 
 #endif
+
+#include "constants.h"
 
 /*===============================================================================================*
  *

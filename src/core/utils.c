@@ -9,9 +9,9 @@
  *
  *===============================================================================================*/
 
-#include "../../include/core/utils.h"
 #include <time.h>
 #include <stdio.h>
+#include "../../include/core/utils.h"
 
 #ifdef _WIN32
 #else

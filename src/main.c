@@ -5,8 +5,10 @@
  *===============================================================================================*/
 
 #include <math.h>
+
 #include "../include/globals.h"
-#include <stdio.h>
+#include "../include/math/utils.h"
+
 #include <stdio.h>
 
 FILE *log_file;
@@ -192,35 +194,6 @@ void draw_function(double (*fn)(int), int x)
         fprintf(log_file, "\n x: %i, y: %f, _y: %i", x, y, (int)y);
 
         buffer[(int)y][x] = full_block;
-}
-
-/**
- * Bad Bresenham's Line Algorithm implementation because it uses multiplication
- * and not just addition and subtraction, but hey it works for now.
- *
- * TODO: Optimize.
- */
-void bla(int x0, int y0, int x1, int y1)
-{
-        // bla(0, SCREEN_WIDTH - 1, (int)SCREEN_WIDTH / 2, 0);
-
-        int dx  = x1 - x0;
-
-        int dy  = y1 - y0;
-
-        float m = 0.0f;
-
-        if (x0 != x1)
-                m = dy / (float)dx;
-
-        for (int i = 0; i < dx; i++)
-        {
-                float _y                 = (m * i) + y0 + 0.5;
-
-                float _x                 = x0 + i;
-
-                buffer[(int)_y][(int)_x] = '$';
-        }
 }
 
 int main()

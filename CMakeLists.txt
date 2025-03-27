@@ -10,7 +10,7 @@ file(GLOB SOURCES
     src/core/*.c
     src/globals.c
     # src/engine/*.c
-    # src/math/*.c
+    src/math/*.c
     src/main.c
 )
 
