@@ -244,4 +244,9 @@ typedef struct
 
 } Mesh;
 
+typedef struct
+{
+        float matrix[4][4];
+} Mat4x4;
+
 #endif

@@ -4,8 +4,15 @@ project(3d-render-engine)
 
 set(CMAKE_C_STANDARD 17)
 
+# Ensure build type is set (defaults to Debug)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+endif()
+
+# Include directories
 include_directories(include)
 
+# Collect source files
 file(GLOB SOURCES
     src/core/*.c
     src/globals.c
@@ -17,28 +24,25 @@ file(GLOB SOURCES
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Set C flags for platform-specific code (e.g., for Windows)
+# Set platform-specific linker flags
 if(WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE _WIN32)
+    target_link_libraries(${PROJECT_NAME} ws2_32 user32 gdi32)
 else()
     target_link_libraries(${PROJECT_NAME} m)
 endif()
 
-# Enable warnings and extra warnings
-add_compile_options(-Wall -Wextra)
+# Enable warnings
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 
-# Set debugging flags for Debug build type
-set(CMAKE_C_FLAGS_DEBUG "-g")  # This will enable debugging symbols (-g)
-
-# Optionally, add specific flags for different build types
+# Ensure debug symbols are enabled in Debug mode
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(${PROJECT_NAME} PRIVATE -g)
+    target_compile_options(${PROJECT_NAME} PRIVATE -g -O0 )
 endif()
 
 # Custom target: "make run"
 add_custom_target(run
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${PROJECT_NAME}
-    COMMAND ${PROJECT_NAME}
+    COMMAND ${CMAKE_BINARY_DIR}/${PROJECT_NAME}
     DEPENDS ${PROJECT_NAME}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )

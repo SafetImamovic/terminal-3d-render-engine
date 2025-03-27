@@ -122,8 +122,6 @@ int main()
 
         log_file = fopen("logs.txt", "a");
 
-        int rotated_x, rotated_y;
-
         Core.Terminal.hide_cursor();
 
         Core.Terminal.init_console();
@@ -131,6 +129,14 @@ int main()
         Core.Utils.init_measurement();
 
         // current_fn = sin_function;
+
+        Mat4x4 proj;
+
+        projection_matrix_init(proj);
+
+        Triangle tri_projd = {
+            {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}}
+        };
 
         while (1)
         {
@@ -140,19 +146,26 @@ int main()
 
                 Core.Utils.draw_coordinate_system();
 
-                for (int i = 0; i < m.size; i++)
+                for (int i = 0; i < (int)m.size; i++)
                 {
                         // printf(
                         //     "%llu\n\t%f\n\t\%f\n\t\%f\n", sizeof *(m.tris + i), (m.tris + i)->points[0].x,
                         //     (m.tris + i)->points[0].y, (m.tris + i)->points[0].z);
 
-                        float x0 = (m.tris + i)->points[0].x * 20 * 2;
-                        float x1 = (m.tris + i)->points[1].x * 20 * 2;
-                        float x2 = (m.tris + i)->points[2].x * 20 * 2;
+                        multiply_matrix_vector(&(m.tris + i)->points[0], &(tri_projd).points[0], &proj);
+                        multiply_matrix_vector(&(m.tris + i)->points[1], &(tri_projd).points[1], &proj);
+                        multiply_matrix_vector(&(m.tris + i)->points[2], &(tri_projd).points[2], &proj);
 
-                        float y0 = (m.tris + i)->points[0].y * 20;
-                        float y1 = (m.tris + i)->points[1].y * 20;
-                        float y2 = (m.tris + i)->points[2].y * 20;
+                        Triangle t = *(m.tris + i);
+
+                        float x0   = t.points[0].x * 20 * 2;
+                        float y0   = t.points[0].y * 20;
+
+                        float x1   = t.points[1].x * 20 * 2;
+                        float y1   = t.points[1].y * 20;
+
+                        float x2   = t.points[2].x * 20 * 2;
+                        float y2   = t.points[2].y * 20;
 
                         bla(x0, y0, x1, y1);
                         bla(x1, y1, x2, y2);
