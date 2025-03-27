@@ -9,7 +9,7 @@ include_directories(include)
 file(GLOB SOURCES
     src/core/*.c
     src/globals.c
-    # src/engine/*.c
+    src/engine/*.c
     src/math/*.c
     src/main.c
 )
