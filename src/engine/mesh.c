@@ -71,7 +71,7 @@ void mesh_info(const Mesh *m)
 }
 
 /**
- *	Projection Matrix:
+ *	Perspective Projection Matrix:
  *
  * 	[ x  y  z  1 ] * | (h/w) * (1/tan(a/2))      0                     0                 0  |
  *                       |                                                                      |
@@ -85,8 +85,8 @@ void mesh_info(const Mesh *m)
  */
 void projection_matrix_init(Mat4x4 *m)
 {
-        float fNear        = 0.1f;
-        float fFar         = 1000.0f;
+        float fNear        = 0.5f;
+        float fFar         = 5.0f;
         float fFov         = 90.0f;
         float fAspectRatio = (float)SCREEN_WIDTH / SCREEN_HEIGHT;
         float fFovRad      = 1.0f / tanf(fFov * 0.5f * (PI / 180.0f));
@@ -111,6 +111,46 @@ void projection_matrix_init(Mat4x4 *m)
         m->matrix[3][1] = 0.0f;
         m->matrix[3][2] = 1.0f;
         m->matrix[3][3] = 0.0f;
+}
+
+void orthogonal_projection_matrix_init(Mat4x4 *m)
+{
+
+        float fAspectRatio = (float)SCREEN_WIDTH / SCREEN_HEIGHT;
+        float left         = 0.0f;
+        float right        = 1.0f * fAspectRatio;
+        float bottom       = 0.0f;
+        float top          = 1.0f;
+        float fNear        = 0.5f;
+        float fFar         = 5.0f;
+
+        float fX           = 2.0f / (right - left);
+        float fY           = 2.0f / (top - bottom);
+        float fF           = 2.0f / (fFar - fNear);
+
+        float _fX          = -(right + left) / (right - left);
+        float _fY          = -(top + bottom) / (top - bottom);
+        float _fF          = -(fFar + fNear) / (fFar - fNear);
+
+        m->matrix[0][0]    = fX;
+        m->matrix[0][1]    = 0.0f;
+        m->matrix[0][2]    = 0.0f;
+        m->matrix[0][3]    = 0.0f;
+
+        m->matrix[1][0]    = 0.0f;
+        m->matrix[1][1]    = fY;
+        m->matrix[1][2]    = 0.0f;
+        m->matrix[1][3]    = 0.0f;
+
+        m->matrix[2][0]    = 0.0f;
+        m->matrix[2][1]    = 0.0f;
+        m->matrix[2][2]    = fF;
+        m->matrix[2][3]    = 0.0f;
+
+        m->matrix[3][0]    = _fX;
+        m->matrix[3][1]    = _fY;
+        m->matrix[3][2]    = _fF;
+        m->matrix[3][3]    = 1.0f;
 }
 
 void multiply_matrix_vector(Vec3D *i, Vec3D *o, Mat4x4 *m)

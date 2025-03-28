@@ -14,3 +14,5 @@ void projection_matrix_init(Mat4x4 *m);
 void multiply_matrix_vector(Vec3D *i, Vec3D *o, Mat4x4 *proj);
 
 void draw_triangle(Triangle *t);
+
+void orthogonal_projection_matrix_init(Mat4x4 *m);

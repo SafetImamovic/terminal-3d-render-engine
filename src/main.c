@@ -22,6 +22,10 @@ double vert_shift      = 0.0f;
 
 double (*current_fn)(double);
 
+float trans_x = 0.0f;
+float trans_y = 0.0f;
+float trans_z = 0.0f;
+
 void rebase(int *x, double *y)
 {
         // This scaling factor is just the individual
@@ -83,28 +87,28 @@ int main()
 
         Triangle tris[] = {
             // SOUTH
-            {{{0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}}},
-            {{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}},
+            {{{0.0f, 0.0f, 0.0f}, {0.0f, 0.5f, 0.0f}, {0.5f, 0.5f, 0.0f}}},
+            {{{0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.0f}, {0.5f, 0.0f, 0.0f}}},
 
             // EAST
-            {{{1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}}},
-            {{{1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 1.0f}}},
+            {{{0.5f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.0f}, {0.5f, 0.5f, 0.5f}}},
+            {{{0.5f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f}, {0.5f, 0.0f, 0.5f}}},
 
             // NORTH
-            {{{1.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 1.0f}}},
-            {{{1.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}},
+            {{{0.5f, 0.0f, 0.5f}, {0.5f, 0.5f, 0.5f}, {0.0f, 0.5f, 0.5f}}},
+            {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.5f}, {0.0f, 0.0f, 0.5f}}},
 
             // WEST
-            {{{0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}}},
-            {{{0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}}},
+            {{{0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.5f}, {0.0f, 0.5f, 0.0f}}},
+            {{{0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.0f}}},
 
             // TOP
-            {{{0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}}},
-            {{{0.0f, 1.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 0.0f}}},
+            {{{0.0f, 0.5f, 0.0f}, {0.0f, 0.5f, 0.5f}, {0.5f, 0.5f, 0.5f}}},
+            {{{0.0f, 0.5f, 0.0f}, {0.5f, 0.5f, 0.5f}, {0.5f, 0.5f, 0.0f}}},
 
             // BOTTOM
-            {{{1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f}}},
-            {{{1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}}};
+            {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.0f}}},
+            {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}}}};
 
         const int num_tris = sizeof(tris) / sizeof(Triangle);
 
@@ -134,6 +138,8 @@ int main()
 
         projection_matrix_init(&proj);
 
+        // orthogonal_projection_matrix_init(&proj);
+
         Triangle tri_projd = {0}, tri_trans = {0};
 
         while (1)
@@ -148,23 +154,26 @@ int main()
                 {
                         tri_trans = *(m.tris + i);
 
-                        tri_trans.points[0].z += 30.0f;
-                        tri_trans.points[1].z += 30.0f;
-                        tri_trans.points[2].z += 30.0f;
+                        // All of the `trans_variable` are shifts that increment
+                        // or decrement by 0.1f, they are all 0.0f by default
+                        // so they don't affect the initial position, scale or rotation.
+                        tri_trans.points[0].z += trans_z;
+                        tri_trans.points[1].z += trans_z;
+                        tri_trans.points[2].z += trans_z;
 
-                        tri_trans.points[0].x -= 0.5f;
-                        tri_trans.points[1].x -= 0.5f;
-                        tri_trans.points[2].x -= 0.5f;
+                        tri_trans.points[0].x += trans_x;
+                        tri_trans.points[1].x += trans_x;
+                        tri_trans.points[2].x += trans_x;
+
+                        tri_trans.points[0].y += trans_y;
+                        tri_trans.points[1].y += trans_y;
+                        tri_trans.points[2].y += trans_y;
 
                         // Scaling the x axis by 2 because of the characters
                         // height:width ratio in the terminal.
                         tri_trans.points[0].x *= 2;
                         tri_trans.points[1].x *= 2;
                         tri_trans.points[2].x *= 2;
-
-                        tri_trans.points[0].y -= 0.5f;
-                        tri_trans.points[1].y -= 0.5f;
-                        tri_trans.points[2].y -= 0.5f;
 
                         multiply_matrix_vector(&(tri_trans).points[0], &(tri_projd).points[0], &proj);
                         multiply_matrix_vector(&(tri_trans).points[1], &(tri_projd).points[1], &proj);
@@ -219,6 +228,18 @@ int main()
 
                         if (c == 'r')
                                 break;
+                        else if (c == 'a')
+                                trans_x += 0.1f;
+                        else if (c == 'd')
+                                trans_x -= 0.1f;
+                        else if (c == 'w')
+                                trans_z += 0.1f;
+                        else if (c == 's')
+                                trans_z -= 0.1f;
+                        else if (c == 'e')
+                                trans_y += 0.1f;
+                        else if (c == 'q')
+                                trans_y -= 0.1f;
                 }
         }
 
