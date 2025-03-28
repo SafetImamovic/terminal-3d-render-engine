@@ -1,6 +1,10 @@
 # Terminal 3D Render Engine
 
 A lightweight **3D render engine** that runs directly in the terminal.
+<figure>
+  <img src="rotating_cube.gif" alt="Rotating Cube Example">
+  <figcaption><em>Rotating Cube Example</em></figcaption>
+</figure>
 
 ## 🔧 Building & Running
 
