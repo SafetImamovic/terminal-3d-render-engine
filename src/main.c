@@ -24,7 +24,7 @@ double (*current_fn)(double);
 
 float trans_x = 0.0f;
 float trans_y = 0.0f;
-float trans_z = 0.0f;
+float trans_z = 2.0f;
 
 void rebase(int *x, double *y)
 {
@@ -140,7 +140,12 @@ int main()
 
         // orthogonal_projection_matrix_init(&proj);
 
-        Triangle tri_projd = {0}, tri_trans = {0};
+        Triangle tri_init = {0}, tri_projd = {0}, tri_trans = {0}, tri_rotated_x = {0}, tri_rotated_z = {0},
+                 tri_rotated_y = {0};
+
+        Mat4x4 rotate_z = {0}, rotate_x = {0}, rotate_y = {0};
+
+        float fAlpha = 0.0f;
 
         while (1)
         {
@@ -150,13 +155,71 @@ int main()
 
                 Core.Utils.draw_coordinate_system();
 
+                fAlpha += 0.01f;
+
+                rotate_z.matrix[0][0] = cosf(fAlpha);
+                rotate_z.matrix[0][1] = sinf(fAlpha);
+                rotate_z.matrix[1][0] = -sinf(fAlpha);
+                rotate_z.matrix[1][1] = cosf(fAlpha);
+                rotate_z.matrix[2][2] = 1.0f;
+                rotate_z.matrix[3][3] = 1.0f;
+
+                rotate_x.matrix[0][0] = 1.0f;
+                rotate_x.matrix[1][1] = cosf(fAlpha * 0.5f);
+                rotate_x.matrix[1][2] = sinf(fAlpha * 0.5f);
+                rotate_x.matrix[2][1] = -sinf(fAlpha * 0.5f);
+                rotate_x.matrix[2][2] = cosf(fAlpha * 0.5f);
+                rotate_x.matrix[3][3] = 1.0f;
+
+                rotate_y.matrix[0][0] = cosf(fAlpha * 0.25f);
+                rotate_y.matrix[0][2] = sinf(fAlpha * 0.25f);
+                rotate_y.matrix[1][1] = 1.0f;
+                rotate_y.matrix[2][0] = -sinf(fAlpha * 0.25f);
+                rotate_y.matrix[2][2] = cosf(fAlpha * 0.25f);
+                rotate_y.matrix[3][3] = 1.0f;
+
                 for (int i = 0; i < (int)m.size; i++)
                 {
-                        tri_trans = *(m.tris + i);
+                        tri_init = *(m.tris + i);
+
+                        /*
+                        multiply_matrix_vector(&(tri_init).points[0], &(tri_rotated_x).points[0], &rotate_x);
+                        multiply_matrix_vector(&(tri_init).points[1], &(tri_rotated_x).points[1], &rotate_x);
+                        multiply_matrix_vector(&(tri_init).points[2], &(tri_rotated_x).points[2], &rotate_x);
+
+                        multiply_matrix_vector(&(tri_rotated_x).points[0], &(tri_rotated_z).points[0], &rotate_z);
+                        multiply_matrix_vector(&(tri_rotated_x).points[1], &(tri_rotated_z).points[1], &rotate_z);
+                        multiply_matrix_vector(&(tri_rotated_x).points[2], &(tri_rotated_z).points[2], &rotate_z);
+                        */
 
                         // All of the `trans_variable` are shifts that increment
                         // or decrement by 0.1f, they are all 0.0f by default
                         // so they don't affect the initial position, scale or rotation.
+                        //
+                        //
+                        float t = tri_init.points[0].x;
+
+                        for (int j = 0; j < 3; j++)
+                        {
+                                tri_init.points[j].x -= 0.25f;
+                                tri_init.points[j].y -= 0.25f;
+                                tri_init.points[j].z -= 0.25f;
+                        }
+
+                        multiply_matrix_vector(&(tri_init).points[0], &(tri_rotated_y).points[0], &rotate_y);
+                        multiply_matrix_vector(&(tri_init).points[1], &(tri_rotated_y).points[1], &rotate_y);
+                        multiply_matrix_vector(&(tri_init).points[2], &(tri_rotated_y).points[2], &rotate_y);
+
+                        // Move cube center back
+                        for (int j = 0; j < 3; j++)
+                        {
+                                tri_rotated_y.points[j].x += 0.25f;
+                                tri_rotated_y.points[j].y += 0.25f;
+                                tri_rotated_y.points[j].z += 0.25f;
+                        }
+
+                        tri_trans = tri_rotated_y;
+
                         tri_trans.points[0].z += trans_z;
                         tri_trans.points[1].z += trans_z;
                         tri_trans.points[2].z += trans_z;

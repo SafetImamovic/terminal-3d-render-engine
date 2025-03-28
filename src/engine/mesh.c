@@ -121,7 +121,7 @@ void orthogonal_projection_matrix_init(Mat4x4 *m)
         float right        = 1.0f * fAspectRatio;
         float bottom       = 0.0f;
         float top          = 1.0f;
-        float fNear        = 0.5f;
+        float fNear        = 0.01f;
         float fFar         = 5.0f;
 
         float fX           = 2.0f / (right - left);
