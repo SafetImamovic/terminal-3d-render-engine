@@ -9,7 +9,7 @@ void mesh_free(Mesh *m);
 
 void mesh_info(const Mesh *m);
 
-void projection_matrix_init(Mat4x4 m);
+void projection_matrix_init(Mat4x4 *m);
 
 void multiply_matrix_vector(Vec3D *i, Vec3D *o, Mat4x4 *proj);
 

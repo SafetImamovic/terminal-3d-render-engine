@@ -15,6 +15,11 @@ void bla(int x0, int y0, int x1, int y1)
 
         while (1)
         {
+                if (x0 < 0 || x0 >= SCREEN_WIDTH || y0 < 0 || y0 >= SCREEN_HEIGHT)
+                {
+                        return;
+                }
+
                 buffer[y0][x0] = '$';
 
                 int e2         = 2 * error;

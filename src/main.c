@@ -132,11 +132,9 @@ int main()
 
         Mat4x4 proj;
 
-        projection_matrix_init(proj);
+        projection_matrix_init(&proj);
 
-        Triangle tri_projd = {
-            {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}}
-        };
+        Triangle tri_projd = {0}, tri_trans = {0};
 
         while (1)
         {
@@ -148,28 +146,61 @@ int main()
 
                 for (int i = 0; i < (int)m.size; i++)
                 {
-                        // printf(
-                        //     "%llu\n\t%f\n\t\%f\n\t\%f\n", sizeof *(m.tris + i), (m.tris + i)->points[0].x,
-                        //     (m.tris + i)->points[0].y, (m.tris + i)->points[0].z);
+                        tri_trans = *(m.tris + i);
 
-                        multiply_matrix_vector(&(m.tris + i)->points[0], &(tri_projd).points[0], &proj);
-                        multiply_matrix_vector(&(m.tris + i)->points[1], &(tri_projd).points[1], &proj);
-                        multiply_matrix_vector(&(m.tris + i)->points[2], &(tri_projd).points[2], &proj);
+                        tri_trans.points[0].z += 30.0f;
+                        tri_trans.points[1].z += 30.0f;
+                        tri_trans.points[2].z += 30.0f;
 
-                        Triangle t = *(m.tris + i);
+                        tri_trans.points[0].x -= 0.5f;
+                        tri_trans.points[1].x -= 0.5f;
+                        tri_trans.points[2].x -= 0.5f;
 
-                        float x0   = t.points[0].x * 20 * 2;
-                        float y0   = t.points[0].y * 20;
+                        // Scaling the x axis by 2 because of the characters
+                        // height:width ratio in the terminal.
+                        tri_trans.points[0].x *= 2;
+                        tri_trans.points[1].x *= 2;
+                        tri_trans.points[2].x *= 2;
 
-                        float x1   = t.points[1].x * 20 * 2;
-                        float y1   = t.points[1].y * 20;
+                        tri_trans.points[0].y -= 0.5f;
+                        tri_trans.points[1].y -= 0.5f;
+                        tri_trans.points[2].y -= 0.5f;
 
-                        float x2   = t.points[2].x * 20 * 2;
-                        float y2   = t.points[2].y * 20;
+                        multiply_matrix_vector(&(tri_trans).points[0], &(tri_projd).points[0], &proj);
+                        multiply_matrix_vector(&(tri_trans).points[1], &(tri_projd).points[1], &proj);
+                        multiply_matrix_vector(&(tri_trans).points[2], &(tri_projd).points[2], &proj);
 
-                        bla(x0, y0, x1, y1);
-                        bla(x1, y1, x2, y2);
-                        bla(x2, y2, x0, y0);
+                        float x0 = tri_projd.points[0].x;
+                        float y0 = tri_projd.points[0].y;
+                        float x1 = tri_projd.points[1].x;
+                        float y1 = tri_projd.points[1].y;
+                        float x2 = tri_projd.points[2].x;
+                        float y2 = tri_projd.points[2].y;
+
+                        x0 += 1.0f;
+                        y0 += 1.0f;
+                        x1 += 1.0f;
+                        y1 += 1.0f;
+                        x2 += 1.0f;
+                        y2 += 1.0f;
+
+                        x0 *= 0.5f * (float)SCREEN_WIDTH;
+                        y0 *= 0.5f * (float)SCREEN_HEIGHT;
+                        x1 *= 0.5f * (float)SCREEN_WIDTH;
+                        y1 *= 0.5f * (float)SCREEN_HEIGHT;
+                        x2 *= 0.5f * (float)SCREEN_WIDTH;
+                        y2 *= 0.5f * (float)SCREEN_HEIGHT;
+
+                        int _x0 = (int)x0;
+                        int _y0 = (int)y0;
+                        int _x1 = (int)x1;
+                        int _y1 = (int)y1;
+                        int _x2 = (int)x2;
+                        int _y2 = (int)y2;
+
+                        bla(_x0, _y0, _x1, _y1);
+                        bla(_x1, _y1, _x2, _y2);
+                        bla(_x2, _y2, _x0, _y0);
                 }
 
                 Core.Utils.draw_stats();

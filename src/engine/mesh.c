@@ -83,49 +83,45 @@ void mesh_info(const Mesh *m)
  *
  *
  */
-void projection_matrix_init(Mat4x4 m)
+void projection_matrix_init(Mat4x4 *m)
 {
         float fNear        = 0.1f;
         float fFar         = 1000.0f;
         float fFov         = 90.0f;
-        float fAspectRatio = (float)SCREEN_HEIGHT / SCREEN_WIDTH;
-        float fFovRad      = 1.0 / tanf(fFov * 0.5f / 180.0f * PI);
+        float fAspectRatio = (float)SCREEN_WIDTH / SCREEN_HEIGHT;
+        float fFovRad      = 1.0f / tanf(fFov * 0.5f * (PI / 180.0f));
 
-        m.matrix[0][0]     = fAspectRatio * fFovRad;
+        // Fill in the projection matrix
+        m->matrix[0][0] = fFovRad / fAspectRatio;
+        m->matrix[0][1] = 0.0f;
+        m->matrix[0][2] = 0.0f;
+        m->matrix[0][3] = 0.0f;
 
-        m.matrix[0][1]     = 0.0f;
+        m->matrix[1][0] = 0.0f;
+        m->matrix[1][1] = fFovRad;
+        m->matrix[1][2] = 0.0f;
+        m->matrix[1][3] = 0.0f;
 
-        m.matrix[0][2]     = 0.0f;
+        m->matrix[2][0] = 0.0f;
+        m->matrix[2][1] = 0.0f;
+        m->matrix[2][2] = fFar / (fFar - fNear);
+        m->matrix[2][3] = -fFar * fNear / (fFar - fNear);
 
-        m.matrix[0][3]     = 0.0f;
-
-        m.matrix[1][0]     = 0.0f;
-
-        m.matrix[1][1]     = fFovRad;
-
-        m.matrix[1][2]     = 0.0f;
-
-        m.matrix[1][3]     = 0.0f;
-
-        m.matrix[2][0]     = 0.0f;
-
-        m.matrix[2][1]     = 0.0f;
-
-        m.matrix[2][2]     = fFar / (fFar - fNear);
-
-        m.matrix[2][3]     = -fFar * fNear / (fFar - fNear);
-
-        m.matrix[3][0]     = 0.0f;
-
-        m.matrix[3][1]     = 0.0f;
-
-        m.matrix[3][2]     = 1.0f;
-
-        m.matrix[3][3]     = 0.0f;
+        m->matrix[3][0] = 0.0f;
+        m->matrix[3][1] = 0.0f;
+        m->matrix[3][2] = 1.0f;
+        m->matrix[3][3] = 0.0f;
 }
 
 void multiply_matrix_vector(Vec3D *i, Vec3D *o, Mat4x4 *m)
 {
+        if (!i || !o || !m)
+        {
+                printf("Error: NULL pointer passed to multiply_matrix_vector.\n");
+
+                return;
+        }
+
         o->x    = i->x * m->matrix[0][0] + i->y * m->matrix[1][0] + i->z * m->matrix[2][0] + m->matrix[3][0];
 
         o->y    = i->x * m->matrix[0][1] + i->y * m->matrix[1][1] + i->z * m->matrix[2][1] + m->matrix[3][1];
