@@ -169,13 +169,20 @@ int main()
                                     &(tri_trans_neg25).points[i], &(tri_rotated).points[i], &rotate_y);
                         }
 
+                        Triangle tri_rotated_y = {0};
+
+                        for (int i = 0; i < 3; i++)
+                        {
+                                multiply_matrix_vector(&(tri_rotated).points[i], &(tri_rotated_y).points[i], &rotate_x);
+                        }
+
                         Triangle tri_trans_pos25 = {0};
 
                         // Translate the points back to their original position
                         for (int i = 0; i < 3; i++)
                         {
                                 multiply_matrix_vector(
-                                    &(tri_rotated).points[i], &(tri_trans_pos25).points[i], &translate_pos_025);
+                                    &(tri_rotated_y).points[i], &(tri_trans_pos25).points[i], &translate_pos_025);
                         }
 
                         Triangle tri_trans_pos25_2 = {0};

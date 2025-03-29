@@ -6,14 +6,14 @@ A lightweight **3D render engine** that runs directly in the terminal.
 
 
 <figure>
-  <img src="rotating_cube.gif" alt="Rotating Cube Example">
+  <img src="examples/rotating_cube.gif" alt="Rotating Cube Example">
   <figcaption><em>Rotating Cube Example</em></figcaption>
 </figure>
 
 ---
 
 <figure>
-  <img src="rotating_dual_polyhedron.gif" alt="Rotating Dual Polyhedron Example">
+  <img src="examples/rotating_dual_polyhedron.gif" alt="Rotating Dual Polyhedron Example">
   <figcaption><em>Rotating Dual Polyhedron Example</em></figcaption>
 </figure>
 
