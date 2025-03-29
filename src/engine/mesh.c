@@ -57,6 +57,33 @@ Triangle cube[] = {
     {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.0f}}},
     {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}}}};
 
+Triangle tetrahedra[] = {
+    // UPPER TETRAHEDRON
+    // BASE (ABC)
+    {{{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.866f}}},
+
+    // SIDE 1 (ABD)
+    {{{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.5f, 0.816f, 0.289f}}},
+
+    // SIDE 2 (BCD)
+    {{{1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.866f}, {0.5f, 0.816f, 0.289f}}},
+
+    // SIDE 3 (CAD)
+    {{{0.5f, 0.0f, 0.866f}, {0.0f, 0.0f, 0.0f}, {0.5f, 0.816f, 0.289f}}},
+
+    // LOWER TETRAHEDRON
+    // BASE (ABC) (same as upper)
+    {{{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.866f}}},
+
+    // SIDE 1 (ABE)
+    {{{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.5f, -0.816f, 0.289f}}},
+
+    // SIDE 2 (BCE)
+    {{{1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.866f}, {0.5f, -0.816f, 0.289f}}},
+
+    // SIDE 3 (CAE)
+    {{{0.5f, 0.0f, 0.866f}, {0.0f, 0.0f, 0.0f}, {0.5f, -0.816f, 0.289f}}}};
+
 /**
  * Function that initializes the mesh.
  *
@@ -262,16 +289,16 @@ void rotation_matrix_z_init(Mat4x4 *m, float fAlpha)
  *                    |                                |
  *                    |  trans_x  trans_y  trans_z  1  |
  */
-void translation_matrix_init(Mat4x4 *m, float offset)
+void translation_matrix_init(Mat4x4 *m, float offset_x, float offset_y, float offset_z)
 {
         m->matrix[0][0] = 1.0f;
         m->matrix[1][1] = 1.0f;
         m->matrix[2][2] = 1.0f;
         m->matrix[3][3] = 1.0f;
 
-        m->matrix[3][0] = offset;
-        m->matrix[3][1] = offset;
-        m->matrix[3][2] = offset;
+        m->matrix[3][0] = offset_x;
+        m->matrix[3][1] = offset_y;
+        m->matrix[3][2] = offset_z;
 }
 
 void multiply_matrix_vector(Vec3D *i, Vec3D *o, Mat4x4 *m)
