@@ -15,8 +15,90 @@
 
 FILE *log_file;
 
+typedef struct
+{
+        Mat4x4 *transformations[8];
+        size_t  size;
+} Pipeline;
+
+void pipeline_add(Pipeline *p, Mat4x4 *m, int index)
+{
+        if (index < 0 || index >= 8)
+        {
+                return;
+        }
+
+        p->transformations[index] = m;
+
+        p->size++;
+}
+
+void pipeline_clear(Pipeline *p)
+{
+        for (int i = 0; i < 8; i++)
+        {
+                p->transformations[i] = NULL;
+
+                p->size               = 0;
+        }
+}
+
+Mat4x4 identity_matrix()
+{
+        Mat4x4 mat = {0};
+
+        for (int i = 0; i < 4; i++)
+        {
+                mat.matrix[i][i] = 1.0f;
+        }
+
+        return mat;
+}
+
+Mat4x4 multiply_matrices(Mat4x4 *a, Mat4x4 *b)
+{
+        Mat4x4 result = {0}; // Initialize to zero
+
+        for (int row = 0; row < 4; row++)
+        {
+                for (int col = 0; col < 4; col++)
+                {
+                        for (int k = 0; k < 4; k++)
+                        {
+                                result.matrix[row][col] += a->matrix[row][k] * b->matrix[k][col];
+                        }
+                }
+        }
+
+        return result;
+}
+
+Triangle pipeline_pass(Pipeline *p, Triangle *in)
+{
+        Mat4x4 final_transform = identity_matrix(); // Start with identity matrix
+
+        // Accumulate transformations
+        for (int i = 0; i < p->size; i++)
+        {
+                final_transform = multiply_matrices(&final_transform, p->transformations[i]);
+        }
+
+        // Apply the final transformation to the input triangle
+        Triangle out = {0};
+
+        for (int j = 0; j < 3; j++)
+        {
+                multiply_matrix_vector(&in->points[j], &out.points[j], &final_transform);
+        }
+
+        return out;
+}
+
 int main()
 {
+        Pipeline p;
+        p.size = 0;
+
         Mesh m, m_tetrahedron;
 
         const int num_tris             = sizeof(cube) / sizeof(Triangle);
@@ -54,13 +136,16 @@ int main()
 
         Triangle tri_init = {0};
 
-        Mat4x4 rotate_z = {0}, rotate_x = {0}, rotate_y = {0}, translate = {0};
+        Mat4x4 rotate_z = {0}, rotate_x = {0}, rotate_y = {0}, translate = {0}, translate_neg_3 = {0},
+               translate_ez      = {0};
 
         float fAlpha             = 0.0f;
 
         Mat4x4 translate_neg_025 = {0};
 
         translation_matrix_init(&translate_neg_025, -0.5f, 0.0f, -0.289f);
+
+        translation_matrix_init(&translate_neg_3, 0.0f, 0.0f, 4.0f);
 
         Mat4x4 translate_pos_025 = {0};
 
@@ -80,134 +165,39 @@ int main()
 
                 rotation_matrix_y_init(&rotate_y, fAlpha);
 
-                /*
-                for (int i = 0; i < (int)m.size; i++)
-                {
-                        tri_init = *(m.tris + i);
-
-                        // All of the `trans_variable` are shifts that increment
-                        // or decrement by 0.1f, they are all 0.0f by default
-                        // so they don't affect the initial position, scale or rotation.
-
-                        Triangle tri_trans_neg25 = {0};
-
-                        // Translate the points negatively to center them at the origin
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(tri_init).points[i], &(tri_trans_neg25).points[i], &translate_neg_025);
-                        }
-
-                        Triangle tri_rotated = {0};
-
-                        // Apply the rotation after translation
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(tri_trans_neg25).points[i], &(tri_rotated).points[i], &rotate_y);
-                        }
-
-                        Triangle tri_trans_pos25 = {0};
-
-                        // Translate the points back to their original position
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(tri_rotated).points[i], &(tri_trans_pos25).points[i], &translate_pos_025);
-                        }
-
-                        Triangle tri_trans_pos25_2 = {0};
-
-                        // Translate the points back to their original position
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(tri_trans_pos25).points[i], &(tri_trans_pos25_2).points[i], &translate_neg_025);
-                        }
-
-                        // Store the result in tri_trans
-                        Triangle tri_trans = tri_trans_pos25_2;
-
-                        translate_add(&tri_trans, &trans_x, &trans_y, &trans_z);
-
-                        // Scaling the x axis by 2 because of the characters
-                        //
-                        // height:width ratio in the terminal.
-                        terminal_character_correction(&tri_trans);
-
-                        Triangle tri_projd = {0};
-
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(&(tri_trans).points[i], &(tri_projd).points[i], &proj);
-                        }
-
-                        triangle_rebase_and_draw(&tri_projd);
-                }
-                */
-
                 for (int i = 0; i < (int)m_tetrahedron.size; i++)
                 {
+
                         Triangle t;
-                        t                        = (m_tetrahedron).tris[i];
+                        t = (m_tetrahedron).tris[i];
 
-                        Triangle tri_trans_neg25 = {0};
+                        pipeline_clear(&p);
 
-                        // Translate the points negatively to center them at the origin
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(t).points[i], &(tri_trans_neg25).points[i], &translate_neg_025);
-                        }
+                        pipeline_add(&p, &translate_neg_025, 0);
 
-                        Triangle tri_rotated = {0};
+                        pipeline_add(&p, &rotate_y, 1);
 
-                        // Apply the rotation after translation
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(tri_trans_neg25).points[i], &(tri_rotated).points[i], &rotate_y);
-                        }
+                        pipeline_add(&p, &rotate_x, 2);
 
-                        Triangle tri_rotated_y = {0};
+                        pipeline_add(&p, &translate_pos_025, 3);
 
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(&(tri_rotated).points[i], &(tri_rotated_y).points[i], &rotate_x);
-                        }
+                        pipeline_add(&p, &translate_neg_3, 4);
 
-                        Triangle tri_trans_pos25 = {0};
+                        pipeline_add(&p, &translate_neg_025, 5);
 
-                        // Translate the points back to their original position
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(tri_rotated_y).points[i], &(tri_trans_pos25).points[i], &translate_pos_025);
-                        }
+                        pipeline_add(&p, &translate_ez, 6);
 
-                        Triangle tri_trans_pos25_2 = {0};
+                        pipeline_add(&p, &proj, 7);
 
-                        // Translate the points back to their original position
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(
-                                    &(tri_trans_pos25).points[i], &(tri_trans_pos25_2).points[i], &translate_neg_025);
-                        }
+                        Triangle last = {0};
 
-                        Triangle last = tri_trans_pos25_2;
+                        last          = pipeline_pass(&p, &t);
 
-                        translate_add(&last, &trans_x, &trans_y, &trans_z);
+                        translation_matrix_init(&translate_ez, trans_x, trans_y, trans_z);
 
                         terminal_character_correction(&last);
 
-                        Triangle t_projd = {0};
-
-                        for (int i = 0; i < 3; i++)
-                        {
-                                multiply_matrix_vector(&last.points[i], &t_projd.points[i], &proj);
-                        }
-
-                        triangle_rebase_and_draw(&t_projd);
+                        triangle_rebase_and_draw(&last);
                 }
 
                 Core.Utils.draw_stats();
