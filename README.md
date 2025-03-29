@@ -10,6 +10,15 @@ A lightweight **3D render engine** that runs directly in the terminal.
   <figcaption><em>Rotating Cube Example</em></figcaption>
 </figure>
 
+---
+
+<figure>
+  <img src="rotating_dual_polyhedron.gif" alt="Rotating Dual Polyhedron Example">
+  <figcaption><em>Rotating Dual Polyhedron Example</em></figcaption>
+</figure>
+
+---
+
 ## 🔧 Building & Running
 
 This project uses **CMake** for cross-platform builds.
