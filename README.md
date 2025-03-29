@@ -2,6 +2,14 @@
 
 A lightweight **3D render engine** that runs directly in the terminal.
 
+> **Disclaimer:** The code is currently quite messy, and I plan to refactor it soon! It also doesn't currently work on Linux.
+
+
+<figure>
+  <img src="rotating_cube.gif" alt="Rotating Cube Example">
+  <figcaption><em>Rotating Cube Example</em></figcaption>
+</figure>
+
 ## 🔧 Building & Running
 
 This project uses **CMake** for cross-platform builds.
