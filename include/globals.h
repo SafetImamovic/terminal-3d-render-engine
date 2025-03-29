@@ -29,6 +29,14 @@
 
 extern wchar_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
+extern double factor;
+extern double rotation_factor;
+extern double phase;
+extern double vert_shift;
+extern float  trans_x;
+extern float  trans_y;
+extern float  trans_z;
+
 /*===============================================================================================*
  *
  * Different Platform Dependant variables and structs which are needed for time

@@ -20,6 +20,14 @@
 
 wchar_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH];
 
+double factor          = 0.1f;
+double rotation_factor = 0.0f;
+double phase           = 0.0f;
+double vert_shift      = 0.0f;
+float  trans_x         = 0.0f;
+float  trans_y         = 0.0f;
+float  trans_z         = 2.0f;
+
 /*===============================================================================================*
  *
  * Different Platform Dependant variables and structs which are needed for time

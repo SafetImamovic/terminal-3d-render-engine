@@ -3,6 +3,61 @@
 #include <stdio.h>
 
 /**
+ *
+ *	UNIT CUBE:
+ *                            NORTH
+ *                              ^
+ *                             /
+ *
+ *             (0,1,1) x---------------x (1,1,1)
+ *           	      /.              /|
+ *	     	     / .	     / |
+ *	    	    /  .    TOP     /  |
+ *	   	   /   .	   /   |
+ *	  	  /    .	  /    |
+ *	 	 /     .	 /     |
+ *	(0,1,0)	x---------------x (1,1,0)
+ *		|      .	|      |
+ *     WEST <- (0,0,1) x........|......x (1,0,1) -> EAST
+ *		|     .         |     /
+ *		|    .          |    /
+ *		|   .   BOTTOM  |   /
+ *		|  .            |  /
+ *		| .             | /
+ *	        |.              |/
+ *	(0,0,0) x---------------x (1,0,0)
+ *
+ *			/
+ *		       V
+ *		     SOUTH
+ */
+
+Triangle cube[] = {
+    // SOUTH
+    {{{0.0f, 0.0f, 0.0f}, {0.0f, 0.5f, 0.0f}, {0.5f, 0.5f, 0.0f}}},
+    {{{0.0f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.0f}, {0.5f, 0.0f, 0.0f}}},
+
+    // EAST
+    {{{0.5f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.0f}, {0.5f, 0.5f, 0.5f}}},
+    {{{0.5f, 0.0f, 0.0f}, {0.5f, 0.5f, 0.5f}, {0.5f, 0.0f, 0.5f}}},
+
+    // NORTH
+    {{{0.5f, 0.0f, 0.5f}, {0.5f, 0.5f, 0.5f}, {0.0f, 0.5f, 0.5f}}},
+    {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.5f}, {0.0f, 0.0f, 0.5f}}},
+
+    // WEST
+    {{{0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.5f}, {0.0f, 0.5f, 0.0f}}},
+    {{{0.0f, 0.0f, 0.5f}, {0.0f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.0f}}},
+
+    // TOP
+    {{{0.0f, 0.5f, 0.0f}, {0.0f, 0.5f, 0.5f}, {0.5f, 0.5f, 0.5f}}},
+    {{{0.0f, 0.5f, 0.0f}, {0.5f, 0.5f, 0.5f}, {0.5f, 0.5f, 0.0f}}},
+
+    // BOTTOM
+    {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.0f}}},
+    {{{0.5f, 0.0f, 0.5f}, {0.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}}}};
+
+/**
  * Function that initializes the mesh.
  *
  * Allocates enough memory for the mesh and sets the `size` and `capacity`.
@@ -153,6 +208,72 @@ void orthogonal_projection_matrix_init(Mat4x4 *m)
         m->matrix[3][3]    = 1.0f;
 }
 
+void rotation_matrix_x_init(Mat4x4 *m, float fAlpha)
+{
+        if (!m)
+        {
+                return;
+        }
+
+        m->matrix[0][0] = 1.0f;
+        m->matrix[1][1] = cosf(fAlpha * 0.5f);
+        m->matrix[1][2] = sinf(fAlpha * 0.5f);
+        m->matrix[2][1] = -sinf(fAlpha * 0.5f);
+        m->matrix[2][2] = cosf(fAlpha * 0.5f);
+        m->matrix[3][3] = 1.0f;
+}
+
+void rotation_matrix_y_init(Mat4x4 *m, float fAlpha)
+{
+        if (!m)
+        {
+                return;
+        }
+
+        m->matrix[0][0] = cosf(fAlpha * 0.25f);
+        m->matrix[0][2] = sinf(fAlpha * 0.25f);
+        m->matrix[1][1] = 1.0f;
+        m->matrix[2][0] = -sinf(fAlpha * 0.25f);
+        m->matrix[2][2] = cosf(fAlpha * 0.25f);
+        m->matrix[3][3] = 1.0f;
+}
+
+void rotation_matrix_z_init(Mat4x4 *m, float fAlpha)
+{
+        if (!m)
+        {
+                return;
+        }
+
+        m->matrix[0][0] = cosf(fAlpha);
+        m->matrix[0][1] = sinf(fAlpha);
+        m->matrix[1][0] = -sinf(fAlpha);
+        m->matrix[1][1] = cosf(fAlpha);
+        m->matrix[2][2] = 1.0f;
+        m->matrix[3][3] = 1.0f;
+}
+
+/**
+ * |  x  y  z  1  | * |     1        0        0     0  |
+ *                    |                                |
+ *                    |     0        1        0     0  |
+ *                    |                                |
+ *                    |     0        0        1     0  |
+ *                    |                                |
+ *                    |  trans_x  trans_y  trans_z  1  |
+ */
+void translation_matrix_init(Mat4x4 *m, float offset)
+{
+        m->matrix[0][0] = 1.0f;
+        m->matrix[1][1] = 1.0f;
+        m->matrix[2][2] = 1.0f;
+        m->matrix[3][3] = 1.0f;
+
+        m->matrix[3][0] = offset;
+        m->matrix[3][1] = offset;
+        m->matrix[3][2] = offset;
+}
+
 void multiply_matrix_vector(Vec3D *i, Vec3D *o, Mat4x4 *m)
 {
         if (!i || !o || !m)
@@ -175,12 +296,59 @@ void multiply_matrix_vector(Vec3D *i, Vec3D *o, Mat4x4 *m)
         }
 }
 
-void draw_triangle(Triangle *t)
+void translate_add(Triangle *t, float *x, float *y, float *z)
 {
+        t->points[0].z += *z;
+        t->points[1].z += *z;
+        t->points[2].z += *z;
 
-        if (t == NULL)
-        {
-                printf("Error: NULL Triangle Pointer!\n");
-                return;
-        }
+        t->points[0].x += *x;
+        t->points[1].x += *x;
+        t->points[2].x += *x;
+
+        t->points[0].y += *y;
+        t->points[1].y += *y;
+        t->points[2].y += *y;
+}
+
+void terminal_character_correction(Triangle *t)
+{
+        t->points[0].x *= 2;
+        t->points[1].x *= 2;
+        t->points[2].x *= 2;
+}
+
+void triangle_rebase_and_draw(Triangle *t)
+{
+        float x0 = t->points[0].x;
+        float y0 = t->points[0].y;
+        float x1 = t->points[1].x;
+        float y1 = t->points[1].y;
+        float x2 = t->points[2].x;
+        float y2 = t->points[2].y;
+
+        x0 += 1.0f;
+        y0 += 1.0f;
+        x1 += 1.0f;
+        y1 += 1.0f;
+        x2 += 1.0f;
+        y2 += 1.0f;
+
+        x0 *= 0.5f * (float)SCREEN_WIDTH;
+        y0 *= 0.5f * (float)SCREEN_HEIGHT;
+        x1 *= 0.5f * (float)SCREEN_WIDTH;
+        y1 *= 0.5f * (float)SCREEN_HEIGHT;
+        x2 *= 0.5f * (float)SCREEN_WIDTH;
+        y2 *= 0.5f * (float)SCREEN_HEIGHT;
+
+        int _x0 = (int)x0;
+        int _y0 = (int)y0;
+        int _x1 = (int)x1;
+        int _y1 = (int)y1;
+        int _x2 = (int)x2;
+        int _y2 = (int)y2;
+
+        bla(_x0, _y0, _x1, _y1);
+        bla(_x1, _y1, _x2, _y2);
+        bla(_x2, _y2, _x0, _y0);
 }
