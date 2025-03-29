@@ -140,12 +140,41 @@ int main()
 
         // orthogonal_projection_matrix_init(&proj);
 
-        Triangle tri_init = {0}, tri_projd = {0}, tri_trans = {0}, tri_rotated_x = {0}, tri_rotated_z = {0},
-                 tri_rotated_y = {0};
+        Triangle tri_init = {0};
 
-        Mat4x4 rotate_z = {0}, rotate_x = {0}, rotate_y = {0};
+        Mat4x4 rotate_z = {0}, rotate_x = {0}, rotate_y = {0}, translate = {0};
 
         float fAlpha = 0.0f;
+        /**
+         * |  x  y  z  1  | * |     1        0        0     0  |
+         *                    |                                |
+         *                    |     0        1        0     0  |
+         *                    |                                |
+         *                    |     0        0        1     0  |
+         *                    |                                |
+         *                    |  trans_x  trans_y  trans_z  1  |
+         */
+        Mat4x4 translate_neg_025       = {0};
+
+        translate_neg_025.matrix[0][0] = 1.0f;
+        translate_neg_025.matrix[1][1] = 1.0f;
+        translate_neg_025.matrix[2][2] = 1.0f;
+        translate_neg_025.matrix[3][3] = 1.0f;
+
+        translate_neg_025.matrix[3][0] = -0.25f;
+        translate_neg_025.matrix[3][1] = -0.25f;
+        translate_neg_025.matrix[3][2] = -0.25f;
+
+        Mat4x4 translate_pos_025       = {0};
+
+        translate_pos_025.matrix[0][0] = 1.0f;
+        translate_pos_025.matrix[1][1] = 1.0f;
+        translate_pos_025.matrix[2][2] = 1.0f;
+        translate_pos_025.matrix[3][3] = 1.0f;
+
+        translate_pos_025.matrix[3][0] = 0.25f;
+        translate_pos_025.matrix[3][1] = 0.25f;
+        translate_pos_025.matrix[3][2] = 0.25f;
 
         while (1)
         {
@@ -155,7 +184,7 @@ int main()
 
                 Core.Utils.draw_coordinate_system();
 
-                fAlpha += 0.01f;
+                fAlpha += 0.005f;
 
                 rotate_z.matrix[0][0] = cosf(fAlpha);
                 rotate_z.matrix[0][1] = sinf(fAlpha);
@@ -182,43 +211,48 @@ int main()
                 {
                         tri_init = *(m.tris + i);
 
-                        /*
-                        multiply_matrix_vector(&(tri_init).points[0], &(tri_rotated_x).points[0], &rotate_x);
-                        multiply_matrix_vector(&(tri_init).points[1], &(tri_rotated_x).points[1], &rotate_x);
-                        multiply_matrix_vector(&(tri_init).points[2], &(tri_rotated_x).points[2], &rotate_x);
-
-                        multiply_matrix_vector(&(tri_rotated_x).points[0], &(tri_rotated_z).points[0], &rotate_z);
-                        multiply_matrix_vector(&(tri_rotated_x).points[1], &(tri_rotated_z).points[1], &rotate_z);
-                        multiply_matrix_vector(&(tri_rotated_x).points[2], &(tri_rotated_z).points[2], &rotate_z);
-                        */
-
                         // All of the `trans_variable` are shifts that increment
                         // or decrement by 0.1f, they are all 0.0f by default
                         // so they don't affect the initial position, scale or rotation.
-                        //
-                        //
-                        float t = tri_init.points[0].x;
 
-                        for (int j = 0; j < 3; j++)
+                        Triangle tri_trans_neg25 = {0};
+
+                        // Translate the points negatively to center them at the origin
+                        for (int i = 0; i < 3; i++)
                         {
-                                tri_init.points[j].x -= 0.25f;
-                                tri_init.points[j].y -= 0.25f;
-                                tri_init.points[j].z -= 0.25f;
+                                multiply_matrix_vector(
+                                    &(tri_init).points[i], &(tri_trans_neg25).points[i], &translate_neg_025);
                         }
 
-                        multiply_matrix_vector(&(tri_init).points[0], &(tri_rotated_y).points[0], &rotate_y);
-                        multiply_matrix_vector(&(tri_init).points[1], &(tri_rotated_y).points[1], &rotate_y);
-                        multiply_matrix_vector(&(tri_init).points[2], &(tri_rotated_y).points[2], &rotate_y);
+                        Triangle tri_rotated = {0};
 
-                        // Move cube center back
-                        for (int j = 0; j < 3; j++)
+                        // Apply the rotation after translation
+                        for (int i = 0; i < 3; i++)
                         {
-                                tri_rotated_y.points[j].x += 0.25f;
-                                tri_rotated_y.points[j].y += 0.25f;
-                                tri_rotated_y.points[j].z += 0.25f;
+                                multiply_matrix_vector(
+                                    &(tri_trans_neg25).points[i], &(tri_rotated).points[i], &rotate_y);
                         }
 
-                        tri_trans = tri_rotated_y;
+                        Triangle tri_trans_pos25 = {0};
+
+                        // Translate the points back to their original position
+                        for (int i = 0; i < 3; i++)
+                        {
+                                multiply_matrix_vector(
+                                    &(tri_rotated).points[i], &(tri_trans_pos25).points[i], &translate_pos_025);
+                        }
+
+                        Triangle tri_trans_pos25_2 = {0};
+
+                        // Translate the points back to their original position
+                        for (int i = 0; i < 3; i++)
+                        {
+                                multiply_matrix_vector(
+                                    &(tri_trans_pos25).points[i], &(tri_trans_pos25_2).points[i], &translate_neg_025);
+                        }
+
+                        // Store the result in tri_trans
+                        Triangle tri_trans = tri_trans_pos25_2;
 
                         tri_trans.points[0].z += trans_z;
                         tri_trans.points[1].z += trans_z;
@@ -237,6 +271,8 @@ int main()
                         tri_trans.points[0].x *= 2;
                         tri_trans.points[1].x *= 2;
                         tri_trans.points[2].x *= 2;
+
+                        Triangle tri_projd = {0};
 
                         multiply_matrix_vector(&(tri_trans).points[0], &(tri_projd).points[0], &proj);
                         multiply_matrix_vector(&(tri_trans).points[1], &(tri_projd).points[1], &proj);
