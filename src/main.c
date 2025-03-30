@@ -120,9 +120,9 @@ void pipeline_clear(Pipeline *p)
         for (int i = 0; i < p->size; i++)
         {
                 p->transformations[i] = NULL;
-
-                p->size               = 0;
         }
+
+        p->size = 0;
 }
 
 Mat4x4 identity_matrix()
