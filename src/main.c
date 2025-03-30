@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#else
 int _kbhit(void)
 {
         struct termios oldt, newt;
@@ -76,6 +78,7 @@ char _getch(void)
 
         return ch;
 }
+#endif
 
 FILE *log_file;
 
