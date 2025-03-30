@@ -45,3 +45,33 @@ void bla(int x0, int y0, int x1, int y1)
                 }
         }
 }
+
+Mat4x4 identity_matrix()
+{
+        Mat4x4 mat = {0};
+
+        for (int i = 0; i < 4; i++)
+        {
+                mat.matrix[i][i] = 1.0f;
+        }
+
+        return mat;
+}
+
+Mat4x4 multiply_matrices(Mat4x4 *a, Mat4x4 *b)
+{
+        Mat4x4 result = {0}; // Initialize to zero
+
+        for (int row = 0; row < 4; row++)
+        {
+                for (int col = 0; col < 4; col++)
+                {
+                        for (int k = 0; k < 4; k++)
+                        {
+                                result.matrix[row][col] += a->matrix[row][k] * b->matrix[k][col];
+                        }
+                }
+        }
+
+        return result;
+}

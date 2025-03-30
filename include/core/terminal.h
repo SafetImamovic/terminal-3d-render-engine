@@ -16,6 +16,8 @@
 #ifdef _WIN32
 #include <conio.h>
 #else
+#include <termios.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -59,5 +61,14 @@ void render_buffer();
  * Clears the screen buffer by filling it with spaces.
  */
 void clear_buffer();
+
+void calculate_true_elapsed_time();
+
+#ifdef _WIN32
+#else
+int _kbhit(void);
+
+char _getch(void);
+#endif
 
 #endif

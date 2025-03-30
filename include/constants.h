@@ -13,6 +13,6 @@
 #define SCREEN_HEIGHT 128
 
 #define PI 3.14159
-#define FPS_LIMIT 0
+#define FPS_LIMIT 144
 
 #endif

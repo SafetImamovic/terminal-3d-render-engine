@@ -119,3 +119,88 @@ void clear_buffer()
                 wmemset(buffer[i], L' ', SCREEN_WIDTH);
         }
 }
+
+void calculate_true_elapsed_time()
+{
+        if (FPS_LIMIT == 0)
+        {
+                true_elapsed_time = elapsed_time;
+
+                return;
+        }
+
+        // How long each frame takes in ms in a span of 1 second for a given frame rate.
+        // FPS_LIMIT = 60; time_per_frame = 1000ms/60frames > 16.7ms
+        time_per_frame = 1000.0f / (float)FPS_LIMIT;
+
+        // Remaining frame time after the loop pass
+        remaining_time_per_frame = time_per_frame - elapsed_time;
+
+        if (remaining_time_per_frame <= 0)
+        {
+                return;
+        }
+
+        Sleep(remaining_time_per_frame);
+
+        true_elapsed_time = remaining_time_per_frame + elapsed_time;
+}
+
+#ifdef _WIN32
+#else
+int _kbhit(void)
+{
+        struct termios oldt, newt;
+        int            ch;
+        int            oldf;
+
+        tcgetattr(STDIN_FILENO, &oldt); // Get current terminal attributes
+
+        newt = oldt;
+
+        newt.c_lflag &= ~(ICANON | ECHO); // Disable canonical mode & echo
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+        oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+
+        fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK); // Set non-blocking mode
+
+        ch = getchar(); // Read a single character
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Restore terminal settings
+
+        fcntl(STDIN_FILENO, F_SETFL, oldf); // Restore flags
+
+        if (ch != EOF)
+        {
+                ungetc(ch, stdin); // Put character back into buffer
+
+                return 1;
+        }
+
+        return 0;
+}
+
+// Function to get a single character
+char _getch(void)
+{
+        struct termios oldt, newt;
+
+        char ch;
+
+        tcgetattr(STDIN_FILENO, &oldt);
+
+        newt = oldt;
+
+        newt.c_lflag &= ~(ICANON | ECHO);
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+        ch = getchar();
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+        return ch;
+}
+#endif
