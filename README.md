@@ -14,7 +14,7 @@ A lightweight **3D render engine** that runs directly in the terminal.
 
 <figure>
   <img src="examples/rotating_dual_polyhedron.gif" alt="Rotating Dual Polyhedron Example">
-  <figcaption><em>Rotating Dual Polyhedron Example</em></figcaption>
+  <figcaption><em>Rotating Triangular Bipyramid Example</em></figcaption>
 </figure>
 
 ---
