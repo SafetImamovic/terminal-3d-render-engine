@@ -12,30 +12,112 @@
 #include "../include/engine/mesh.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 FILE *log_file;
 
 typedef struct
 {
-        Mat4x4 *transformations[8];
-        size_t  size;
+        Mat4x4 **transformations;
+        size_t   size;
+        size_t   capacity;
 } Pipeline;
 
-void pipeline_add(Pipeline *p, Mat4x4 *m, int index)
+void pipeline_init(Pipeline *p, size_t c)
 {
-        if (index < 0 || index >= 8)
+        p->size            = 0;
+        p->capacity        = c;
+
+        p->transformations = (Mat4x4 **)malloc(sizeof(Mat4x4 *) * c);
+
+        if (!p->transformations)
+        {
+                perror("Failed to allocate memory");
+
+                exit(EXIT_FAILURE);
+        }
+
+        for (size_t i = 0; i < c; i++)
+        {
+                p->transformations[i] = NULL;
+        }
+}
+
+void pipeline_free(Pipeline *p)
+{
+        if (p->transformations)
+        {
+                for (size_t i = 0; i < p->size; i++)
+                {
+                        free(p->transformations[i]);
+                }
+
+                free(p->transformations);
+
+                p->transformations = NULL;
+        }
+
+        p->size     = 0;
+        p->capacity = 0;
+}
+
+void pipeline_push(Pipeline *p, Mat4x4 *m)
+{
+        if (!p->transformations || !m)
         {
                 return;
         }
 
-        p->transformations[index] = m;
+        if (p->size >= p->capacity)
+        {
+                p->capacity *= 2;
 
-        p->size++;
+                p->transformations = (Mat4x4 **)realloc(p->transformations, sizeof(Mat4x4 *) * p->capacity);
+
+                if (!p->transformations)
+                {
+                        perror("Memory reallocation failed");
+
+                        exit(EXIT_FAILURE);
+                }
+        }
+
+        p->transformations[p->size++] = m;
+}
+
+Mat4x4 *pipeline_pop(Pipeline *p)
+{
+        if (p->size == 0)
+        {
+                return NULL;
+        }
+
+        Mat4x4 *last                    = p->transformations[p->size - 1];
+
+        p->transformations[p->size - 1] = NULL;
+
+        p->size--;
+
+        if (p->size > 0 && p->size <= p->capacity / 4)
+        {
+                p->capacity /= 2;
+
+                p->transformations = (Mat4x4 **)realloc(p->transformations, sizeof(Mat4x4 *) * p->capacity);
+
+                if (!p->transformations)
+                {
+                        perror("Memory reallocation failed");
+
+                        exit(EXIT_FAILURE);
+                }
+        }
+
+        return last;
 }
 
 void pipeline_clear(Pipeline *p)
 {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < p->size; i++)
         {
                 p->transformations[i] = NULL;
 
@@ -98,6 +180,8 @@ int main()
 {
         Pipeline p;
         p.size = 0;
+
+        pipeline_init(&p, 2);
 
         Mesh m, m_tetrahedron;
 
@@ -173,21 +257,21 @@ int main()
 
                         pipeline_clear(&p);
 
-                        pipeline_add(&p, &translate_neg_025, 0);
+                        pipeline_push(&p, &translate_neg_025);
 
-                        pipeline_add(&p, &rotate_y, 1);
+                        pipeline_push(&p, &rotate_y);
 
-                        pipeline_add(&p, &rotate_x, 2);
+                        pipeline_push(&p, &rotate_x);
 
-                        pipeline_add(&p, &translate_pos_025, 3);
+                        pipeline_push(&p, &translate_pos_025);
 
-                        pipeline_add(&p, &translate_neg_3, 4);
+                        pipeline_push(&p, &translate_neg_3);
 
-                        pipeline_add(&p, &translate_neg_025, 5);
+                        pipeline_push(&p, &translate_neg_025);
 
-                        pipeline_add(&p, &translate_ez, 6);
+                        pipeline_push(&p, &translate_ez);
 
-                        pipeline_add(&p, &proj, 7);
+                        pipeline_push(&p, &proj);
 
                         Triangle last = {0};
 
@@ -234,6 +318,8 @@ int main()
         mesh_free(&m);
 
         mesh_info(&m);
+
+        pipeline_free(&p);
 
         Core.Terminal.show_cursor();
 
