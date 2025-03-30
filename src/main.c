@@ -4,7 +4,14 @@
  *
  *===============================================================================================*/
 
+#ifdef _WIN32
 #include <conio.h>
+#else
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+#include <fcntl.h>
+#endif
 #include <math.h>
 
 #include "../include/globals.h"
@@ -13,6 +20,62 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+int _kbhit(void)
+{
+        struct termios oldt, newt;
+        int            ch;
+        int            oldf;
+
+        tcgetattr(STDIN_FILENO, &oldt); // Get current terminal attributes
+
+        newt = oldt;
+
+        newt.c_lflag &= ~(ICANON | ECHO); // Disable canonical mode & echo
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+        oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+
+        fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK); // Set non-blocking mode
+
+        ch = getchar(); // Read a single character
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Restore terminal settings
+
+        fcntl(STDIN_FILENO, F_SETFL, oldf); // Restore flags
+
+        if (ch != EOF)
+        {
+                ungetc(ch, stdin); // Put character back into buffer
+
+                return 1;
+        }
+
+        return 0;
+}
+
+// Function to get a single character
+char _getch(void)
+{
+        struct termios oldt, newt;
+
+        char ch;
+
+        tcgetattr(STDIN_FILENO, &oldt);
+
+        newt = oldt;
+
+        newt.c_lflag &= ~(ICANON | ECHO);
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+        ch = getchar();
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+        return ch;
+}
 
 FILE *log_file;
 
