@@ -50,6 +50,12 @@ extern const wchar_t full_block;
 
 extern double elapsed_time;
 
+extern double true_elapsed_time;
+
+extern float time_per_frame;
+
+extern float remaining_time_per_frame;
+
 #ifdef _WIN32
 
 extern LARGE_INTEGER frequency, start, end;

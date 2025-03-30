@@ -182,6 +182,32 @@ Mat4x4 *pipeline_pop(Pipeline *p)
         return last;
 }
 
+void calculate_true_elapsed_time()
+{
+        if (FPS_LIMIT == 0)
+        {
+                true_elapsed_time = elapsed_time;
+
+                return;
+        }
+
+        // How long each frame takes in ms in a span of 1 second for a given frame rate.
+        // FPS_LIMIT = 60; time_per_frame = 1000ms/60frames > 16.7ms
+        time_per_frame = 1000.0f / (float)FPS_LIMIT;
+
+        // Remaining frame time after the loop pass
+        remaining_time_per_frame = time_per_frame - elapsed_time;
+
+        if (remaining_time_per_frame <= 0)
+        {
+                return;
+        }
+
+        Sleep(remaining_time_per_frame);
+
+        true_elapsed_time = remaining_time_per_frame + elapsed_time;
+}
+
 void pipeline_clear(Pipeline *p)
 {
         for (int i = 0; i < p->size; i++)
@@ -310,7 +336,10 @@ int main()
 
                 Core.Utils.draw_coordinate_system();
 
-                fAlpha += 0.005f;
+                if (FPS_LIMIT != 0)
+                        fAlpha += 4.0f / (float)FPS_LIMIT;
+                else
+                        fAlpha += 0.001f;
 
                 rotation_matrix_x_init(&rotate_x, fAlpha);
 
@@ -351,15 +380,7 @@ int main()
                         triangle_rebase_and_draw(&last);
                 }
 
-                Core.Utils.draw_stats();
-
                 Core.Utils.draw_edges('|', '-', '+');
-
-                Core.Terminal.render_buffer();
-
-                Core.Utils.measure_end();
-
-                Core.Utils.measure_diff();
 
                 if (_kbhit())
                 {
@@ -380,6 +401,16 @@ int main()
                         else if (c == 'q')
                                 trans_y -= 0.1f;
                 }
+
+                Core.Utils.draw_stats();
+
+                Core.Terminal.render_buffer();
+
+                Core.Utils.measure_end();
+
+                Core.Utils.measure_diff();
+
+                calculate_true_elapsed_time();
         }
 
         mesh_free(&m);

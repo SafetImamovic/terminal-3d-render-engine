@@ -50,7 +50,13 @@ struct sigaction sa;
 
 #endif
 
-double elapsed_time = 0.0f;
+double elapsed_time            = 0.0f;
+
+double true_elapsed_time       = 0.0f;
+
+float time_per_frame           = 0.0f;
+
+float remaining_time_per_frame = 0.0f;
 
 /*===============================================================================================*
  *

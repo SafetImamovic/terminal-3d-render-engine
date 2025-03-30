@@ -127,10 +127,10 @@ void measure_diff()
  */
 void draw_stats()
 {
-        double fps = 1000.0 / elapsed_time;
+        double fps = 1000.0 / true_elapsed_time;
 
         // Ensure the string is exactly WIDTH characters
-        swprintf(buffer[0], SCREEN_WIDTH, L"Elapsed Time: %.3f ms | FPS: %.2f", elapsed_time, fps);
+        swprintf(buffer[0], SCREEN_WIDTH, L"Elapsed Time: %.3f ms | FPS: %.2f", true_elapsed_time, fps);
 
         // Manually fill the remaining space with spaces
         size_t len = wcslen(buffer[0]);
