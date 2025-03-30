@@ -4,6 +4,8 @@
  *
  *===============================================================================================*/
 
+#include <stdlib.h>
+
 #ifdef _WIN32
 #include <conio.h>
 #else
@@ -19,7 +21,6 @@
 #include "../include/engine/mesh.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #ifdef _WIN32
 #else

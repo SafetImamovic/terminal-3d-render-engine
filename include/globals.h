@@ -9,6 +9,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include <stdlib.h>
+
 #include <wchar.h>
 
 #ifdef _WIN32
