@@ -1,4 +1,5 @@
 #include "../../include/engine/pipeline.h"
+#include <stdio.h>
 
 void pipeline_init(Pipeline *p, size_t c)
 {

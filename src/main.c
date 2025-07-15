@@ -161,6 +161,8 @@ int main()
                 Core.Utils.measure_diff();
 
                 calculate_true_elapsed_time();
+
+                printf("Got here.");
         }
 
         mesh_free(&m);

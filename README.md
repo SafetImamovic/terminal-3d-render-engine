@@ -79,3 +79,30 @@ mingw32-make -C build run
 ```
 
 Now you’re ready to experience 3D rendering in the terminal! 🚀
+
+## Configuration
+
+Configure the engine variables found in `/include/constants.h`:
+
+```c
+/*===============================================================================================*
+ *
+ * File: constants.h
+ *
+ * Description: Declares and defines different types of constants.
+ *
+ *===============================================================================================*/
+
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define SCREEN_WIDTH 300
+#define SCREEN_HEIGHT 64
+
+#define PI 3.14159
+#define FPS_LIMIT 0
+
+#endif
+```
+
+

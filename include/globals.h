@@ -54,7 +54,7 @@ extern double true_elapsed_time;
 
 extern float time_per_frame;
 
-extern float remaining_time_per_frame;
+extern unsigned int remaining_time_per_frame;
 
 #ifdef _WIN32
 

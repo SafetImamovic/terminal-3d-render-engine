@@ -141,7 +141,13 @@ void calculate_true_elapsed_time()
                 return;
         }
 
+#ifdef _WIN32
         Sleep(remaining_time_per_frame);
+#else
+        struct timespec ts = {
+            .tv_sec = remaining_time_per_frame / 1000, .tv_nsec = (remaining_time_per_frame % 1000) * 1000000};
+        nanosleep(&ts, NULL);
+#endif
 
         true_elapsed_time = remaining_time_per_frame + elapsed_time;
 }
@@ -154,47 +160,35 @@ int _kbhit(void)
         int            ch;
         int            oldf;
 
-        tcgetattr(STDIN_FILENO, &oldt); // Get current terminal attributes
-
+        tcgetattr(STDIN_FILENO, &oldt);
         newt = oldt;
-
-        newt.c_lflag &= ~(ICANON | ECHO); // Disable canonical mode & echo
-
+        newt.c_lflag &= ~(ICANON | ECHO);
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-
         oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+        fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
 
-        fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK); // Set non-blocking mode
+        ch = getchar();
 
-        ch = getchar(); // Read a single character
-
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // Restore terminal settings
-
-        fcntl(STDIN_FILENO, F_SETFL, oldf); // Restore flags
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        fcntl(STDIN_FILENO, F_SETFL, oldf);
 
         if (ch != EOF)
         {
-                ungetc(ch, stdin); // Put character back into buffer
-
+                ungetc(ch, stdin);
                 return 1;
         }
 
         return 0;
 }
 
-// Function to get a single character
 char _getch(void)
 {
         struct termios oldt, newt;
-
-        char ch;
+        char           ch;
 
         tcgetattr(STDIN_FILENO, &oldt);
-
         newt = oldt;
-
         newt.c_lflag &= ~(ICANON | ECHO);
-
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
         ch = getchar();
